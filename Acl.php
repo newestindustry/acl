@@ -71,16 +71,18 @@ class Acl {
      */
     public function readConfig($filename = "") {
         if(!is_string($filename)) {
-            throw new \Nicci\Acl\Exception("No config file given.", 10001);
+            throw new \Nicci\Acl\Exception(sprintf("No config file given."), 10001);
         }
 
         if($filename !== "") {
             if(!file_exists($filename)) {
-                throw new \Nicci\Acl\Exception("Config file not found.", 10002);
+                throw new \Nicci\Acl\Exception(sprintf('Config file "%s" not found.', $filename), 10002);
             }
             
-            $this->rawConfig = yaml_parse_file($filename, 0);
-
+            $this->rawConfig = @yaml_parse_file($filename, 0);
+            if(!$this->rawConfig) {
+                throw new \Nicci\Acl\Exception(sprintf('Config file "%s" failed to parse.', $filename), 10002);
+            }
             $this->parseRoles();
             $this->parseRecursiveResources($this->rawConfig['resources']);
             $this->parseAccessFromResources();
