@@ -213,6 +213,30 @@ class Acl {
      */
     public function check($role, $resource) {
         if(!$this->checkIfRoleExists($role)) {
+            return false;
+        }
+        
+        if(!$this->checkIfResourceExists($resource)) {
+            return false;
+        }
+        
+        if(!$this->checkIfRoleHasAccessToResource($role, $resource)) {
+            return false;
+        }
+        
+        return true;
+    }
+    
+    /**
+     * enforce function.
+     * 
+     * @access public
+     * @param mixed $role
+     * @param mixed $resource
+     * @return boolean
+     */
+    public function enforce($role, $resource) {
+        if(!$this->checkIfRoleExists($role)) {
             throw new \Nicci\Acl\Exception(sprintf('Role "%s" not found', $role), 11001);
         }
         
